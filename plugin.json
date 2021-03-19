@@ -1,0 +1,6 @@
+{
+    "name": "GeoIP",
+    "url": "https://github.com/PostHog/posthog-plugin-geoip",
+    "description": "Enrich PostHog events and persons with GeoIP location data",
+    "main": "dist/index.js"
+}
