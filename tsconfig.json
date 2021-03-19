@@ -8,9 +8,8 @@
         "forceConsistentCasingInFileNames": true,
         "noImplicitReturns": true,
         "noUnusedParameters": true,
-        "resolveJsonModule": true,
-        "outDir": "dist",
-        "rootDir": "src"
+        "noEmit": true,
+        "resolveJsonModule": true
     },
-    "exclude": ["**/*.test.ts"]
+    "exclude": ["**.test.ts"]
 }

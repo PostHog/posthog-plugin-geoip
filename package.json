@@ -22,7 +22,8 @@
         "lint:fix": "eslint --fix .",
         "format": "prettier --write .",
         "format:check": "prettier --check .",
-        "prepublishOnly": "yarn test"
+        "prepublishOnly": "yarn test",
+        "typecheck": "tsc"
     },
     "dependencies": {},
     "devDependencies": {

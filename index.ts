@@ -4,7 +4,7 @@ const plugin: Plugin = {
     processEvent: (event, { geoip }) => {
         if (event.ip) {
             if (event.ip === '127.0.0.1') {
-                event.ip = '2.22.230.255'
+                event.ip = '13.106.122.3'
             }
             const response = geoip.locate(event.ip)
             if (response) {
