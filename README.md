@@ -1,6 +1,6 @@
 # PostHog Plugin: GeoIP
 
-Enrich PostHog events and persons with GeoIP location data.
+Enrich PostHog events and persons with IP location data.
 
 ## Installation
 
