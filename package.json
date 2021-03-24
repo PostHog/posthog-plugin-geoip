@@ -27,6 +27,7 @@
     },
     "dependencies": {},
     "devDependencies": {
+        "@posthog/plugin-globals": "0.0.1",
         "@posthog/plugin-scaffold": "0.4.2",
         "@types/jest": "^26.0.19",
         "@typescript-eslint/eslint-plugin": "^4.12.0",

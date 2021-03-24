@@ -9,7 +9,8 @@
         "noImplicitReturns": true,
         "noUnusedParameters": true,
         "noEmit": true,
-        "resolveJsonModule": true
+        "resolveJsonModule": true,
+        "types": ["../@posthog/plugin-globals"]
     },
     "exclude": ["**.test.ts"]
 }
