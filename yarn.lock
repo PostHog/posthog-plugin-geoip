@@ -539,6 +539,11 @@
     "@nodelib/fs.scandir" "2.1.4"
     fastq "^1.6.0"
 
+"@posthog/plugin-globals@0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@posthog/plugin-globals/-/plugin-globals-0.0.1.tgz#dc247e6bf15fd466763a695df6254be05f8148cc"
+  integrity sha512-s2dyDQhs4ZZTudH1qiVx2ImMDZsfJt+zoamh9aFwk8gcRrASW/Z28fxVVkmg2k21pibbgbirB1gruXlZgKwSNg==
+
 "@posthog/plugin-scaffold@0.4.2":
   version "0.4.2"
   resolved "https://registry.yarnpkg.com/@posthog/plugin-scaffold/-/plugin-scaffold-0.4.2.tgz#170516bf9593ba86e351b33e94bf4b6a019ce6f7"
