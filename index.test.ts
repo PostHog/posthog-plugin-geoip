@@ -1,8 +1,9 @@
+import { Reader } from '@maxmind/geoip2-node'
 import { Plugin, PluginMeta } from '@posthog/plugin-scaffold'
 // @ts-ignore
 import { createPageview, resetMeta } from '@posthog/plugin-scaffold/test/utils'
 import { join } from 'path'
-import { Reader } from '@maxmind/geoip2-node'
+
 import * as index from '.'
 
 const { processEvent } = index as Required<Plugin>
