@@ -17,7 +17,7 @@
     "homepage": "https://github.com/PostHog/posthog-plugin-geoip#readme",
     "author": "PostHog <hey@posthog.com>",
     "scripts": {
-        "test": "jest src",
+        "test": "jest .",
         "lint": "eslint .",
         "lint:fix": "eslint --fix .",
         "format": "prettier --write .",
@@ -27,6 +27,7 @@
     },
     "dependencies": {},
     "devDependencies": {
+        "@maxmind/geoip2-node": "^2.3.1",
         "@posthog/plugin-scaffold": "0.4.2",
         "@types/jest": "^26.0.19",
         "@typescript-eslint/eslint-plugin": "^4.12.0",
