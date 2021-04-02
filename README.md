@@ -2,6 +2,8 @@
 
 Enrich PostHog events and persons with IP location data.
 
+***Requirements: PostHog Cloud or PostHog 1.24.0+***
+
 ## Installation
 
 1. Access PostHog's **Plugins** page from the sidebar.
