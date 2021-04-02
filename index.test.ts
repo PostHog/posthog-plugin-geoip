@@ -17,7 +17,7 @@ async function resetMetaWithMmdb(file = 'GeoLite2-City-Test.mmdb'): Promise<Plug
     }) as PluginMeta
 }
 
-test('GeoLite2-City', async () => {
+test('event is enriched with IP location', async () => {
     const event = await processEvent({ ...createPageview(), ip: '89.160.20.129' }, await resetMetaWithMmdb())
     expect(event!.properties).toEqual(
         expect.objectContaining({
@@ -32,5 +32,14 @@ test('GeoLite2-City', async () => {
             $subdivision_1_code: 'E',
             $subdivision_1_name: 'Östergötland County',
         })
+    )
+})
+
+test('error is thrown if meta.geoip is not provided', async () => {
+    expect.assertions(1)
+    await expect(
+        async () => await processEvent({ ...createPageview(), ip: '89.160.20.129' }, resetMeta())
+    ).rejects.toEqual(
+        new Error('This PostHog version does not have GeoIP capabilities! Upgrade to PostHog 1.24.0 or later')
     )
 })
