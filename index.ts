@@ -15,28 +15,28 @@ const plugin: Plugin = {
                     event.properties = {}
                 }
                 if (response.city) {
-                    event.properties['$city_name'] = response.city.names?.en
+                    event.properties['$geoip_city_name'] = response.city.names?.en
                 }
                 if (response.country) {
-                    event.properties['$country_name'] = response.country.names?.en
-                    event.properties['$country_code'] = response.country.isoCode
+                    event.properties['$geoip_country_name'] = response.country.names?.en
+                    event.properties['$geoip_country_code'] = response.country.isoCode
                 }
                 if (response.continent) {
-                    event.properties['$continent_name'] = response.continent.names?.en
-                    event.properties['$continent_code'] = response.continent.code
+                    event.properties['$geoip_continent_name'] = response.continent.names?.en
+                    event.properties['$geoip_continent_code'] = response.continent.code
                 }
                 if (response.postal) {
-                    event.properties['$postal_code'] = response.postal.code
+                    event.properties['$geoip_postal_code'] = response.postal.code
                 }
                 if (response.location) {
-                    event.properties['$latitude'] = response.location?.latitude
-                    event.properties['$longitude'] = response.location?.longitude
-                    event.properties['$time_zone'] = response.location?.timeZone
+                    event.properties['$geoip_latitude'] = response.location?.latitude
+                    event.properties['$geoip_longitude'] = response.location?.longitude
+                    event.properties['$geoip_time_zone'] = response.location?.timeZone
                 }
                 if (response.subdivisions) {
                     for (const [index, subdivision] of response.subdivisions.entries()) {
-                        event.properties[`$subdivision_${index + 1}_code`] = subdivision.isoCode
-                        event.properties[`$subdivision_${index + 1}_name`] = subdivision.names?.en
+                        event.properties[`$geoip_subdivision_${index + 1}_code`] = subdivision.isoCode
+                        event.properties[`$geoip_subdivision_${index + 1}_name`] = subdivision.names?.en
                     }
                 }
             }

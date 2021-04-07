@@ -21,16 +21,16 @@ test('event is enriched with IP location', async () => {
     const event = await processEvent({ ...createPageview(), ip: '89.160.20.129' }, await resetMetaWithMmdb())
     expect(event!.properties).toEqual(
         expect.objectContaining({
-            $city_name: 'Linköping',
-            $country_name: 'Sweden',
-            $country_code: 'SE',
-            $continent_name: 'Europe',
-            $continent_code: 'EU',
-            $latitude: 58.4167,
-            $longitude: 15.6167,
-            $time_zone: 'Europe/Stockholm',
-            $subdivision_1_code: 'E',
-            $subdivision_1_name: 'Östergötland County',
+            $geoip_city_name: 'Linköping',
+            $geoip_country_name: 'Sweden',
+            $geoip_country_code: 'SE',
+            $geoip_continent_name: 'Europe',
+            $geoip_continent_code: 'EU',
+            $geoip_latitude: 58.4167,
+            $geoip_longitude: 15.6167,
+            $geoip_time_zone: 'Europe/Stockholm',
+            $geoip_subdivision_1_code: 'E',
+            $geoip_subdivision_1_name: 'Östergötland County',
         })
     )
 })
