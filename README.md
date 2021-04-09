@@ -1,8 +1,8 @@
 # PostHog Plugin: GeoIP
 
-Enrich PostHog events and persons with IP location data.
+Enrich PostHog events and persons with IP location data. Simply enable this plugin - from that point on, your new events will have GeoIP data added, allowing you to locate users and run queries based on geographic data.
 
-***Requirements: PostHog Cloud or PostHog 1.24.0+***
+***Available on Cloud and self-hosted PostHog 1.24.0+***
 
 ## Installation
 
