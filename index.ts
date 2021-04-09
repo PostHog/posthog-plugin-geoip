@@ -1,7 +1,7 @@
 import { Plugin } from '@posthog/plugin-scaffold'
 
 const plugin: Plugin = {
-    processEvent: (event, { geoip }) => {
+    processEvent: async (event, { geoip }) => {
         if (!geoip) {
             throw new Error('This PostHog version does not have GeoIP capabilities! Upgrade to PostHog 1.24.0 or later')
         }
@@ -9,7 +9,7 @@ const plugin: Plugin = {
             if (event.ip === '127.0.0.1') {
                 event.ip = '13.106.122.3'
             }
-            const response = geoip.locate(event.ip)
+            const response = await geoip.locate(event.ip)
             if (response) {
                 if (!event.properties) {
                     event.properties = {}

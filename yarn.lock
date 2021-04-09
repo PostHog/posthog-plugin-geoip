@@ -539,10 +539,9 @@
     "@nodelib/fs.scandir" "2.1.4"
     fastq "^1.6.0"
 
-"@posthog/plugin-scaffold@0.4.2":
+"@posthog/plugin-scaffold@github:PostHog/plugin-scaffold":
   version "0.4.2"
-  resolved "https://registry.yarnpkg.com/@posthog/plugin-scaffold/-/plugin-scaffold-0.4.2.tgz#170516bf9593ba86e351b33e94bf4b6a019ce6f7"
-  integrity sha512-E6wiMA7NT0OArgRuJFkNJ02iOrx9ZvqwbnZDydr2ei9PZVwnc66MS/jfpvwVOT8shDtQYnrf8GabBo4AM9cATg==
+  resolved "https://codeload.github.com/PostHog/plugin-scaffold/tar.gz/35040ed41a7a23638bbef26384d6bd5838d909f9"
   dependencies:
     "@maxmind/geoip2-node" "^2.3.1"
 
