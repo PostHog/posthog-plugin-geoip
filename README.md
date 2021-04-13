@@ -4,6 +4,29 @@ Enrich PostHog events and persons with IP location data. Simply enable this plug
 
 ***Available on Cloud and self-hosted PostHog 1.24.0+***
 
+## Details
+
+This plugin works on events that have an `ip` (for IP address) attribute attached, which is the case for most sources of events.
+
+The following properties can be added to the event if its IP address can be matched to a GeoLite2 City location:
+
+```TypeScript
+$geoip_city_name: string
+$geoip_country_name: string
+$geoip_country_code: string
+$geoip_continent_name: string
+$geoip_continent_code: string
+$geoip_latitude: number
+$geoip_longitude: number
+$geoip_time_zone: string
+$geoip_subdivision_1_code: string
+$geoip_subdivision_1_name: string
+```
+
+View of an example event in PostHog:
+
+<img width="708" alt="GeoIP properties in PostHog UI" src="https://user-images.githubusercontent.com/4550621/114558202-bc076600-9c6a-11eb-9c0e-1bd3cc1f3dd7.png">
+
 ## Installation
 
 1. Access PostHog's **Plugins** page from the sidebar.
