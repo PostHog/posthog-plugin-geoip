@@ -37,4 +37,4 @@ View of an example event in PostHog:
 
 ## Questions?
 
-### [Join our Slack community.](https://posthog.com/slack)
+### [Join the PostHog Users Slack community.](https://posthog.com/slack)
