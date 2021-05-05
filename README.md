@@ -11,17 +11,23 @@ This plugin works on events that have an `ip` (for IP address) attribute attache
 The following properties can be added to the event if its IP address can be matched to a GeoLite2 City location:
 
 ```TypeScript
-$geoip_city_name: string
-$geoip_country_name: string
-$geoip_country_code: string
-$geoip_continent_name: string
-$geoip_continent_code: string
-$geoip_latitude: number
-$geoip_longitude: number
-$geoip_time_zone: string
-$geoip_subdivision_1_code: string
-$geoip_subdivision_1_name: string
+$geoip_city_name?: string
+$geoip_country_name?: string
+$geoip_country_code?: string
+$geoip_continent_name?: string
+$geoip_continent_code?: string
+$geoip_latitude?: number
+$geoip_longitude?: number
+$geoip_time_zone?: string
+$geoip_subdivision_1_code?: string
+$geoip_subdivision_1_name?: string
+$geoip_subdivision_2_code?: string
+$geoip_subdivision_2_name?: string
+$geoip_subdivision_3_code?: string
+$geoip_subdivision_3_name?: string
 ```
+
+They are also set on the associated person same as above, plus set_once in `$initial_geoip_...` form, to record where the user was when they were first seen.
 
 View of an example event in PostHog:
 
