@@ -1,6 +1,6 @@
 {
     "name": "posthog-plugin-geoip",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "Enrich PostHog events and persons with IP location data",
     "keywords": [
         "posthog",
