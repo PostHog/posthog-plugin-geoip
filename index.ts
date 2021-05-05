@@ -7,37 +7,51 @@ const plugin: Plugin = {
         }
         if (event.ip) {
             if (event.ip === '127.0.0.1') {
-                event.ip = '13.106.122.3'
+                event.ip = '13.106.122.3' // Spoofing an Australian IP address for local development
             }
             const response = await geoip.locate(event.ip)
             if (response) {
-                if (!event.properties) {
-                    event.properties = {}
-                }
+                const location: Record<string, any> = {}
                 if (response.city) {
-                    event.properties['$geoip_city_name'] = response.city.names?.en
+                    location['city_name'] = response.city.names?.en
                 }
                 if (response.country) {
-                    event.properties['$geoip_country_name'] = response.country.names?.en
-                    event.properties['$geoip_country_code'] = response.country.isoCode
+                    location['country_name'] = response.country.names?.en
+                    location['country_code'] = response.country.isoCode
                 }
                 if (response.continent) {
-                    event.properties['$geoip_continent_name'] = response.continent.names?.en
-                    event.properties['$geoip_continent_code'] = response.continent.code
+                    location['continent_name'] = response.continent.names?.en
+                    location['continent_code'] = response.continent.code
                 }
                 if (response.postal) {
-                    event.properties['$geoip_postal_code'] = response.postal.code
+                    location['postal_code'] = response.postal.code
                 }
                 if (response.location) {
-                    event.properties['$geoip_latitude'] = response.location?.latitude
-                    event.properties['$geoip_longitude'] = response.location?.longitude
-                    event.properties['$geoip_time_zone'] = response.location?.timeZone
+                    location['latitude'] = response.location?.latitude
+                    location['longitude'] = response.location?.longitude
+                    location['time_zone'] = response.location?.timeZone
                 }
                 if (response.subdivisions) {
                     for (const [index, subdivision] of response.subdivisions.entries()) {
-                        event.properties[`$geoip_subdivision_${index + 1}_code`] = subdivision.isoCode
-                        event.properties[`$geoip_subdivision_${index + 1}_name`] = subdivision.names?.en
+                        location[`subdivision_${index + 1}_code`] = subdivision.isoCode
+                        location[`subdivision_${index + 1}_name`] = subdivision.names?.en
                     }
+                }
+
+                if (!event.properties) {
+                    event.properties = {}
+                }
+                if (!event.$set) {
+                    event.$set = {}
+                }
+                if (!event.$set_once) {
+                    event.$set_once = {}
+                }
+
+                for (const [key, value] of Object.entries(location)) {
+                    event.properties[`$geoip_${key}`] = value
+                    event.$set[`$geoip_${key}`] = value
+                    event.$set_once[`$initial_geoip_${key}`] = value
                 }
             }
         }
