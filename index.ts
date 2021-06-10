@@ -1,11 +1,23 @@
 import { Plugin } from '@posthog/plugin-scaffold'
 
 const plugin: Plugin = {
-    processEvent: async (event, { geoip }) => {
+    processEvent: async (event, { geoip, storage }) => {
         if (!geoip) {
             throw new Error('This PostHog version does not have GeoIP capabilities! Upgrade to PostHog 1.24.0 or later')
         }
         if (event.ip) {
+            const lastIpSet = await storage.get(event.distinct_id, `${event.ip}|${event.timestamp}`)
+            if (typeof lastIpSet === 'string') {
+                const [ip, timestamp] = lastIpSet.split('|')
+                if (ip === event.ip) {
+                    return event
+                }
+                if (event.timestamp && timestamp) {
+                    if (new Date(event.timestamp) < new Date(timestamp)) {
+                        return event
+                    }
+                }
+            }
             if (event.ip === '127.0.0.1') {
                 event.ip = '13.106.122.3' // Spoofing an Australian IP address for local development
             }
