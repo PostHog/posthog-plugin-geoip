@@ -66,8 +66,8 @@ const plugin: Plugin = {
                     event.$set_once[`$initial_geoip_${key}`] = value
                 }
             }
+            await storage.set(event.distinct_id, `${event.ip}|${event.timestamp || ''}`)
         }
-        await storage.set(event.distinct_id, `${event.ip}|${event.timestamp}`)
         return event
     },
 }
