@@ -9,10 +9,15 @@ const plugin: Plugin = {
             const lastIpSet = await storage.get(event.distinct_id, null)
             if (typeof lastIpSet === 'string') {
                 const [ip, timestamp] = lastIpSet.split('|')
+
+                // same ip as is currently set on the person
                 if (ip === event.ip) {
                     return event
                 }
+
                 if (event.timestamp && timestamp) {
+                    // new ip but this event is late and another event that happened
+                    // after but was received earlier already updated the props
                     if (new Date(event.timestamp) < new Date(timestamp)) {
                         return event
                     }
