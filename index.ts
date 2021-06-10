@@ -6,7 +6,7 @@ const plugin: Plugin = {
             throw new Error('This PostHog version does not have GeoIP capabilities! Upgrade to PostHog 1.24.0 or later')
         }
         if (event.ip) {
-            const lastIpSet = await storage.get(event.distinct_id, `${event.ip}|${event.timestamp}`)
+            const lastIpSet = await storage.get(event.distinct_id, null)
             if (typeof lastIpSet === 'string') {
                 const [ip, timestamp] = lastIpSet.split('|')
                 if (ip === event.ip) {
@@ -67,6 +67,7 @@ const plugin: Plugin = {
                 }
             }
         }
+        await storage.set(event.distinct_id, `${event.ip}|${event.timestamp}`)
         return event
     },
 }
