@@ -1,28 +1,13 @@
 import { Plugin } from '@posthog/plugin-scaffold'
 
+const ONE_DAY = 60 * 60 * 24 // 24h in seconds
+
 const plugin: Plugin = {
-    processEvent: async (event, { geoip, storage }) => {
+    processEvent: async (event, { geoip, cache }) => {
         if (!geoip) {
             throw new Error('This PostHog version does not have GeoIP capabilities! Upgrade to PostHog 1.24.0 or later')
         }
         if (event.ip) {
-            const lastIpSet = await storage.get(event.distinct_id, null)
-            if (typeof lastIpSet === 'string') {
-                const [ip, timestamp] = lastIpSet.split('|')
-
-                // same ip as is currently set on the person
-                if (ip === event.ip) {
-                    return event
-                }
-
-                if (event.timestamp && timestamp) {
-                    // new ip but this event is late and another event that happened
-                    // after but was received earlier already updated the props
-                    if (new Date(event.timestamp) < new Date(timestamp)) {
-                        return event
-                    }
-                }
-            }
             if (event.ip === '127.0.0.1') {
                 event.ip = '13.106.122.3' // Spoofing an Australian IP address for local development
             }
@@ -58,20 +43,40 @@ const plugin: Plugin = {
                 if (!event.properties) {
                     event.properties = {}
                 }
-                if (!event.$set) {
-                    event.$set = {}
-                }
-                if (!event.$set_once) {
-                    event.$set_once = {}
+
+                let setUserProps = true
+
+                const lastIpSet = await cache.get(event.distinct_id, null)
+                if (typeof lastIpSet === 'string') {
+                    const [ip, timestamp] = lastIpSet.split('|')
+
+                    // new ip but this event is late and another event that happened
+                    // after but was received earlier already updated the props
+                    const isEventSettingPropertiesLate =
+                        event.timestamp && timestamp && new Date(event.timestamp) < new Date(timestamp)
+
+                    // same ip as is currently set on the person
+                    const isSameIp = ip === event.ip
+                    if (isSameIp || isEventSettingPropertiesLate) {
+                        setUserProps = false
+                    }
                 }
 
                 for (const [key, value] of Object.entries(location)) {
                     event.properties[`$geoip_${key}`] = value
-                    event.$set[`$geoip_${key}`] = value
-                    event.$set_once[`$initial_geoip_${key}`] = value
+                    if (setUserProps) {
+                        if (!event.$set) {
+                            event.$set = {}
+                        }
+                        if (!event.$set_once) {
+                            event.$set_once = {}
+                        }
+                        event.$set[`$geoip_${key}`] = value
+                        event.$set_once[`$initial_geoip_${key}`] = value
+                        await cache.set(event.distinct_id, `${event.ip}|${event.timestamp || ''}`, ONE_DAY)
+                    }
                 }
             }
-            await storage.set(event.distinct_id, `${event.ip}|${event.timestamp || ''}`)
         }
         return event
     },
