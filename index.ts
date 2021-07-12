@@ -9,6 +9,7 @@ const plugin: Plugin = {
         }
         let ip = event.properties?.$ip || event.ip
         if (ip && !event.properties?.$geoip_disable) {
+            ip = String(ip)
             if (ip === '127.0.0.1') {
                 ip = '13.106.122.3' // Spoofing an Australian IP address for local development
             }
