@@ -4,9 +4,13 @@ Enrich PostHog events and persons with IP location data. Simply enable this plug
 
 ***Available on Cloud and self-hosted PostHog 1.24.0+***
 
-## Details
+## IP Address Detection
 
-This plugin works on events that have an `ip` (for IP address) attribute attached, which is the case for most sources of events.
+This plugin prefers to use event property `$ip` (which should be of type `string`), but if that is not provided,
+it uses the IP address of the client that sent the event.
+This way in most cases the plugin can infer the IP address without any work on your side.
+
+## Properties
 
 The following properties can be added to the event if its IP address can be matched to a GeoLite2 City location:
 
@@ -32,6 +36,14 @@ They are also set on the associated person same as above, plus set_once in `$ini
 View of an example event in PostHog:
 
 <img width="708" alt="GeoIP properties in PostHog UI" src="https://user-images.githubusercontent.com/4550621/114558202-bc076600-9c6a-11eb-9c0e-1bd3cc1f3dd7.png">
+
+## Caveats
+
+A case to be aware of is sending events from a server – such events, if not provided with custom property `$ip`,
+will be detected as sent from the location of the data center, instead of the related user.
+
+If you'd like this plugin to skip over an event and not add the above properties,
+set property `$geoip_disable` to `true` on that event.
 
 ## Installation
 

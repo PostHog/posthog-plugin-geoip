@@ -7,11 +7,13 @@ const plugin: Plugin = {
         if (!geoip) {
             throw new Error('This PostHog version does not have GeoIP capabilities! Upgrade to PostHog 1.24.0 or later')
         }
-        if (event.ip) {
-            if (event.ip === '127.0.0.1') {
-                event.ip = '13.106.122.3' // Spoofing an Australian IP address for local development
+        let ip = event.properties?.$ip || event.ip
+        if (ip && !event.properties?.$geoip_disable) {
+            ip = String(ip)
+            if (ip === '127.0.0.1') {
+                ip = '13.106.122.3' // Spoofing an Australian IP address for local development
             }
-            const response = await geoip.locate(event.ip)
+            const response = await geoip.locate(ip)
             if (response) {
                 const location: Record<string, any> = {}
                 if (response.city) {
@@ -56,7 +58,7 @@ const plugin: Plugin = {
                         event.timestamp && timestamp && new Date(event.timestamp) < new Date(timestamp)
 
                     // same ip as is currently set on the person
-                    const isSameIp = ip === event.ip
+                    const isSameIp = ip === ip
                     if (isSameIp || isEventSettingPropertiesLate) {
                         setUserProps = false
                     }
@@ -73,7 +75,7 @@ const plugin: Plugin = {
                         }
                         event.$set[`$geoip_${key}`] = value
                         event.$set_once[`$initial_geoip_${key}`] = value
-                        await cache.set(event.distinct_id, `${event.ip}|${event.timestamp || ''}`, ONE_DAY)
+                        await cache.set(event.distinct_id, `${ip}|${event.timestamp || ''}`, ONE_DAY)
                     }
                 }
             }

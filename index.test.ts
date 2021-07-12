@@ -75,3 +75,9 @@ test('error is thrown if meta.geoip is not provided', async () => {
         new Error('This PostHog version does not have GeoIP capabilities! Upgrade to PostHog 1.24.0 or later')
     )
 })
+
+test('event is skipped using $geoip_disable', async () => {
+    const testEvent = { ...createPageview(), ip: '89.160.20.129', properties: { $geoip_disable: true } }
+    const processedEvent = await processEvent(JSON.parse(JSON.stringify(testEvent)), await resetMetaWithMmdb())
+    expect(testEvent).toEqual(processedEvent)
+})
