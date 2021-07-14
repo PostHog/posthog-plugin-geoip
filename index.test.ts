@@ -81,3 +81,26 @@ test('event is skipped using $geoip_disable', async () => {
     const processedEvent = await processEvent(JSON.parse(JSON.stringify(testEvent)), await resetMetaWithMmdb())
     expect(testEvent).toEqual(processedEvent)
 })
+
+test('$set optimization works', async () => {
+    const meta = await resetMetaWithMmdb()
+
+    const testEvent1 = { ...createPageview(), ip: '89.160.20.129' }
+    const processedEvent1 = await processEvent(JSON.parse(JSON.stringify(testEvent1)), meta)
+    expect(processedEvent1!.$set).toMatchObject({
+        $geoip_city_name: 'Linköping',
+        $geoip_country_name: 'Sweden',
+        $geoip_country_code: 'SE',
+        $geoip_continent_name: 'Europe',
+        $geoip_continent_code: 'EU',
+        $geoip_latitude: 58.4167,
+        $geoip_longitude: 15.6167,
+        $geoip_time_zone: 'Europe/Stockholm',
+        $geoip_subdivision_1_code: 'E',
+        $geoip_subdivision_1_name: 'Östergötland County',
+    })
+
+    const testEvent2 = { ...createPageview(), ip: '89.160.20.129', properties: { foo: 'same IP second time' } }
+    const processedEvent2 = await processEvent(JSON.parse(JSON.stringify(testEvent2)), meta)
+    expect(processedEvent2!.$set).toBeUndefined()
+})
