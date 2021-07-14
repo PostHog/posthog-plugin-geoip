@@ -46,27 +46,26 @@ const plugin: Plugin = {
                     event.properties = {}
                 }
 
-                let setUserProps = true
+                let setPersonProps = true
 
-                const lastIpSet = await cache.get(event.distinct_id, null)
-                if (typeof lastIpSet === 'string') {
-                    const [ip, timestamp] = lastIpSet.split('|')
+                const lastIpSetEntry = await cache.get(event.distinct_id, null)
+                if (typeof lastIpSetEntry === 'string') {
+                    const [lastIpSet, timestamp] = lastIpSetEntry.split('|')
 
-                    // new ip but this event is late and another event that happened
-                    // after but was received earlier already updated the props
+                    // New IP but this event is late and another event that happened after
+                    // but was received earlier has already updated the props
                     const isEventSettingPropertiesLate =
                         event.timestamp && timestamp && new Date(event.timestamp) < new Date(timestamp)
 
-                    // same ip as is currently set on the person
-                    const isSameIp = ip === ip
-                    if (isSameIp || isEventSettingPropertiesLate) {
-                        setUserProps = false
+                    // Person props update is not needed if the event's IP is the same as last set for the person
+                    if (lastIpSet === ip || isEventSettingPropertiesLate) {
+                        setPersonProps = false
                     }
                 }
 
                 for (const [key, value] of Object.entries(location)) {
                     event.properties[`$geoip_${key}`] = value
-                    if (setUserProps) {
+                    if (setPersonProps) {
                         if (!event.$set) {
                             event.$set = {}
                         }
