@@ -2,6 +2,18 @@ import { Plugin } from '@posthog/plugin-scaffold'
 
 const ONE_DAY = 60 * 60 * 24 // 24h in seconds
 
+const defaultLocationSetAndSetOnceProps = {
+    $geoip_city_name: '',
+    $geoip_country_name: '',
+    $geoip_country_code: '',
+    $geoip_continent_name: '',
+    $geoip_continent_code: '',
+    $geoip_postal_code: '',
+    $geoip_latitude: '',
+    $geoip_longitude: '',
+    $geoip_time_zone: '',
+}
+
 const plugin: Plugin = {
     processEvent: async (event, { geoip, cache }) => {
         if (!geoip) {
@@ -63,17 +75,19 @@ const plugin: Plugin = {
                     }
                 }
 
+                if (setPersonProps) {
+                    event.$set = { ...(event.$set ? event.$set : {}), ...defaultLocationSetAndSetOnceProps }
+                    event.$set_once = {
+                        ...(event.$set_once ? event.$set_once : {}),
+                        ...defaultLocationSetAndSetOnceProps,
+                    }
+                }
+
                 for (const [key, value] of Object.entries(location)) {
                     event.properties[`$geoip_${key}`] = value
                     if (setPersonProps) {
-                        if (!event.$set) {
-                            event.$set = {}
-                        }
-                        if (!event.$set_once) {
-                            event.$set_once = {}
-                        }
-                        event.$set[`$geoip_${key}`] = value
-                        event.$set_once[`$initial_geoip_${key}`] = value
+                        event.$set![`$geoip_${key}`] = value
+                        event.$set_once![`$initial_geoip_${key}`] = value
                         await cache.set(event.distinct_id, `${ip}|${event.timestamp || ''}`, ONE_DAY)
                     }
                 }
