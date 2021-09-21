@@ -76,9 +76,9 @@ const plugin: Plugin = {
                 }
 
                 if (setPersonProps) {
-                    event.$set = { ...(event.$set ? event.$set : {}), ...defaultLocationSetAndSetOnceProps }
+                    event.$set = { ...(event.$set ?? {}), ...defaultLocationSetAndSetOnceProps }
                     event.$set_once = {
-                        ...(event.$set_once ? event.$set_once : {}),
+                        ...(event.$set_once ?? {}),
                         ...defaultLocationSetAndSetOnceProps,
                     }
                 }
