@@ -3,15 +3,15 @@ import { Plugin } from '@posthog/plugin-scaffold'
 const ONE_DAY = 60 * 60 * 24 // 24h in seconds
 
 const defaultLocationSetAndSetOnceProps = {
-    $geoip_city_name: '',
-    $geoip_country_name: '',
-    $geoip_country_code: '',
-    $geoip_continent_name: '',
-    $geoip_continent_code: '',
-    $geoip_postal_code: '',
-    $geoip_latitude: '',
-    $geoip_longitude: '',
-    $geoip_time_zone: '',
+    $geoip_city_name: null,
+    $geoip_country_name: null,
+    $geoip_country_code: null,
+    $geoip_continent_name: null,
+    $geoip_continent_code: null,
+    $geoip_postal_code: null,
+    $geoip_latitude: null,
+    $geoip_longitude: null,
+    $geoip_time_zone: null,
 }
 
 const plugin: Plugin = {
@@ -76,10 +76,10 @@ const plugin: Plugin = {
                 }
 
                 if (setPersonProps) {
-                    event.$set = { ...(event.$set ?? {}), ...defaultLocationSetAndSetOnceProps }
+                    event.$set = { ...defaultLocationSetAndSetOnceProps, ...(event.$set ?? {}) }
                     event.$set_once = {
-                        ...(event.$set_once ?? {}),
                         ...defaultLocationSetAndSetOnceProps,
+                        ...(event.$set_once ?? {}),
                     }
                 }
 
