@@ -2,6 +2,30 @@ import { Plugin } from '@posthog/plugin-scaffold'
 
 const ONE_DAY = 60 * 60 * 24 // 24h in seconds
 
+const defaultLocationSetProps = {
+    $geoip_city_name: null,
+    $geoip_country_name: null,
+    $geoip_country_code: null,
+    $geoip_continent_name: null,
+    $geoip_continent_code: null,
+    $geoip_postal_code: null,
+    $geoip_latitude: null,
+    $geoip_longitude: null,
+    $geoip_time_zone: null,
+}
+
+const defaultLocationSetOnceProps = {
+    $initial_geoip_city_name: null,
+    $initial_geoip_country_name: null,
+    $initial_geoip_country_code: null,
+    $initial_geoip_continent_name: null,
+    $initial_geoip_continent_code: null,
+    $initial_geoip_postal_code: null,
+    $initial_geoip_latitude: null,
+    $initial_geoip_longitude: null,
+    $initial_geoip_time_zone: null,
+}
+
 const plugin: Plugin = {
     processEvent: async (event, { geoip, cache }) => {
         if (!geoip) {
@@ -63,17 +87,19 @@ const plugin: Plugin = {
                     }
                 }
 
+                if (setPersonProps) {
+                    event.$set = { ...defaultLocationSetProps, ...(event.$set ?? {}) }
+                    event.$set_once = {
+                        ...defaultLocationSetOnceProps,
+                        ...(event.$set_once ?? {}),
+                    }
+                }
+
                 for (const [key, value] of Object.entries(location)) {
                     event.properties[`$geoip_${key}`] = value
                     if (setPersonProps) {
-                        if (!event.$set) {
-                            event.$set = {}
-                        }
-                        if (!event.$set_once) {
-                            event.$set_once = {}
-                        }
-                        event.$set[`$geoip_${key}`] = value
-                        event.$set_once[`$initial_geoip_${key}`] = value
+                        event.$set![`$geoip_${key}`] = value
+                        event.$set_once![`$initial_geoip_${key}`] = value
                         await cache.set(event.distinct_id, `${ip}|${event.timestamp || ''}`, ONE_DAY)
                     }
                 }
