@@ -37,7 +37,7 @@ const plugin: Plugin = {
             if (ip === '127.0.0.1') {
                 ip = '13.106.122.3' // Spoofing an Australian IP address for local development
             }
-            var response = await cache.get(ip, false)
+            let response = await cache.get(ip, false)
             if (!response) {
                 response = await geoip.locate(ip)
                 await cache.set(ip, JSON.stringify(response))
