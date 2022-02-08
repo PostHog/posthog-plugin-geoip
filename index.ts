@@ -43,7 +43,7 @@ const plugin: Plugin = {
                 response = await geoip.locate(ip)
                 await cache.set(ip, JSON.stringify(response))
             } else {
-                response = JSON.parse(cacheResponse)
+                response = JSON.parse(cacheResponse as string)
             }
             if (response) {
                 const location: Record<string, any> = {}
