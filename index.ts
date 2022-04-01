@@ -106,6 +106,7 @@ const plugin: Plugin = {
 
                 if (config.dropIPAddress) {
                     event.ip = null
+                    event.properties.ip = null
                 }
             }
         }
