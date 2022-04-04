@@ -27,7 +27,7 @@ const defaultLocationSetOnceProps = {
 }
 
 const plugin: Plugin = {
-    processEvent: async (event, { geoip, cache, config }) => {
+    processEvent: async (event, { geoip, cache }) => {
         if (!geoip) {
             throw new Error('This PostHog version does not have GeoIP capabilities! Upgrade to PostHog 1.24.0 or later')
         }
@@ -102,11 +102,6 @@ const plugin: Plugin = {
                         event.$set_once![`$initial_geoip_${key}`] = value
                         await cache.set(event.distinct_id, `${ip}|${event.timestamp || ''}`, ONE_DAY)
                     }
-                }
-
-                if (config.dropIPAddress) {
-                    event.ip = null
-                    event.properties.ip = null
                 }
             }
         }
