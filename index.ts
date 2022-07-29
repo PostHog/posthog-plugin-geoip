@@ -100,8 +100,11 @@ const plugin: Plugin = {
                     if (setPersonProps) {
                         event.$set![`$geoip_${key}`] = value
                         event.$set_once![`$initial_geoip_${key}`] = value
-                        await cache.set(event.distinct_id, `${ip}|${event.timestamp || ''}`, ONE_DAY)
                     }
+                }
+                
+                if (setPersonProps) {
+                    await cache.set(event.distinct_id, `${ip}|${event.timestamp || ''}`, ONE_DAY)
                 }
             }
         }
