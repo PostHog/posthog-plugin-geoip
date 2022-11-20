@@ -10,12 +10,23 @@ const { processEvent } = index as Required<Plugin>
 
 const DEFAULT_MMDB_FILE_NAME = 'GeoLite2-City-Test.mmdb'
 
+const configAllPropsEnabled: index.GeoIpConfig = {
+    city: 'enabled',
+    country: 'enabled',
+    timezone: 'enabled',
+    continent: 'enabled',
+    coordinates: 'enabled',
+    postal_code: 'enabled',
+}
+
 async function resetMetaWithMmdb(
+    config = configAllPropsEnabled,
     transformResult = (res: City) => res as Record<string, any>,
     file = DEFAULT_MMDB_FILE_NAME
 ): Promise<PluginMeta> {
     const mmdb = await Reader.open(join(__dirname, file))
     return resetMeta({
+        config,
         geoip: {
             locate: (ipAddress: string) => {
                 const res = mmdb.city(ipAddress)
@@ -75,6 +86,26 @@ test('person is enriched with IP location', async () => {
     )
 })
 
+test('discards disabled props', async () => {
+    const event = await processEvent(
+        { ...createPageview(), ip: '89.160.20.129' },
+        await resetMetaWithMmdb({
+            city: 'enabled',
+            country: 'enabled',
+            timezone: 'enabled',
+            continent: 'enabled',
+            coordinates: 'disabled',
+            postal_code: 'enabled',
+        })
+    )
+    expect(event!.properties).toEqual(
+        expect.not.objectContaining({
+            $geoip_latitude: 58.4167,
+            $geoip_longitude: 15.6167,
+        })
+    )
+})
+
 test('person props default to null if no values present', async () => {
     const removeCityNameFromLookupResult = (res: City) => {
         const { city, ...remainingResult } = res
@@ -82,7 +113,7 @@ test('person props default to null if no values present', async () => {
     }
     const event = await processEvent(
         { ...createPageview(), ip: '89.160.20.129' },
-        await resetMetaWithMmdb(removeCityNameFromLookupResult)
+        await resetMetaWithMmdb(configAllPropsEnabled, removeCityNameFromLookupResult)
     )
     expect(event!.$set).toEqual(
         expect.objectContaining({

@@ -4,5 +4,51 @@
     "description": "Enrich PostHog events and persons with IP location data",
     "main": "index.ts",
     "posthogVersion": ">=1.24.0",
-    "stateless": true
+    "config": [
+        {
+            "markdown": "\n\nChoose which Geo data is added to events.\n"
+        },
+        {
+            "key": "city",
+            "name": "City",
+            "type": "choice",
+            "choices": ["enabled", "disabled"],
+            "default": "enabled"
+        },
+        {
+            "key": "country",
+            "name": "Country",
+            "type": "choice",
+            "choices": ["enabled", "disabled"],
+            "default": "enabled"
+        },
+        {
+            "key": "continent",
+            "name": "Continent",
+            "type": "choice",
+            "choices": ["enabled", "disabled"],
+            "default": "enabled"
+        },
+        {
+            "key": "postal_code",
+            "name": "Postal Code",
+            "type": "choice",
+            "choices": ["enabled", "disabled"],
+            "default": "enabled"
+        },
+        {
+            "key": "coordinates",
+            "name": "Coordinates (lat/long)",
+            "type": "choice",
+            "choices": ["enabled", "disabled"],
+            "default": "enabled"
+        },
+        {
+            "key": "timezone",
+            "name": "Time Zone",
+            "type": "choice",
+            "choices": ["enabled", "disabled"],
+            "default": "enabled"
+        }
+    ]
 }

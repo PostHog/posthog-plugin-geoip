@@ -2,6 +2,17 @@ import { Plugin } from '@posthog/plugin-scaffold'
 
 const ONE_DAY = 60 * 60 * 24 // 24h in seconds
 
+type GeoIpConfigValue = 'enabled' | 'disabled'
+
+export type GeoIpConfig = {
+    city: GeoIpConfigValue
+    country: GeoIpConfigValue
+    timezone: GeoIpConfigValue
+    continent: GeoIpConfigValue
+    coordinates: GeoIpConfigValue
+    postal_code: GeoIpConfigValue
+}
+
 const defaultLocationSetProps = {
     $geoip_city_name: null,
     $geoip_country_name: null,
@@ -26,12 +37,15 @@ const defaultLocationSetOnceProps = {
     $initial_geoip_time_zone: null,
 }
 
+const configIsPropEnabled = (config: GeoIpConfig) => (prop: keyof GeoIpConfig): boolean => config[prop] === 'enabled'
+
 const plugin: Plugin = {
-    processEvent: async (event, { geoip, cache }) => {
+    processEvent: async (event, { config, geoip, cache }) => {
         if (!geoip) {
             throw new Error('This PostHog version does not have GeoIP capabilities! Upgrade to PostHog 1.24.0 or later')
         }
         let ip = event.properties?.$ip || event.ip
+        const isPropEnabled = configIsPropEnabled(config as GeoIpConfig)
         if (ip && !event.properties?.$geoip_disable) {
             ip = String(ip)
             if (ip === '127.0.0.1') {
@@ -39,25 +53,30 @@ const plugin: Plugin = {
             }
             const response = await geoip.locate(ip)
             if (response) {
-                const location: Record<string, any> = {}
-                if (response.city) {
+                const location: Record<string, string | number> = {}
+                const responseLocation = response.location
+                if (isPropEnabled('city') && response.city) {
                     location['city_name'] = response.city.names?.en
                 }
-                if (response.country) {
+                if (isPropEnabled('country') && response.country) {
                     location['country_name'] = response.country.names?.en
                     location['country_code'] = response.country.isoCode
                 }
-                if (response.continent) {
+                if (isPropEnabled('continent') && response.continent) {
                     location['continent_name'] = response.continent.names?.en
                     location['continent_code'] = response.continent.code
                 }
-                if (response.postal) {
+                if (isPropEnabled('postal_code') && response.postal) {
                     location['postal_code'] = response.postal.code
                 }
-                if (response.location) {
-                    location['latitude'] = response.location?.latitude
-                    location['longitude'] = response.location?.longitude
-                    location['time_zone'] = response.location?.timeZone
+                if (responseLocation) {
+                    if (isPropEnabled('coordinates')) {
+                        location['latitude'] = responseLocation?.latitude
+                        location['longitude'] = responseLocation?.longitude
+                    }
+                    if (isPropEnabled('timezone') && responseLocation.timeZone) {
+                        location['time_zone'] = responseLocation.timeZone
+                    }
                 }
                 if (response.subdivisions) {
                     for (const [index, subdivision] of response.subdivisions.entries()) {
@@ -102,7 +121,7 @@ const plugin: Plugin = {
                         event.$set_once![`$initial_geoip_${key}`] = value
                     }
                 }
-                
+
                 if (setPersonProps) {
                     await cache.set(event.distinct_id, `${ip}|${event.timestamp || ''}`, ONE_DAY)
                 }
