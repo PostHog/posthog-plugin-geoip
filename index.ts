@@ -4,6 +4,10 @@ const ONE_DAY = 60 * 60 * 24 // 24h in seconds
 
 const defaultLocationSetProps = {
     $geoip_city_name: null,
+    $geoip_subdivision_2_name: null,
+    $geoip_subdivision_2_code: null,
+    $geoip_subdivision_1_name: null,
+    $geoip_subdivision_1_code: null,
     $geoip_country_name: null,
     $geoip_country_code: null,
     $geoip_continent_name: null,
@@ -16,6 +20,10 @@ const defaultLocationSetProps = {
 
 const defaultLocationSetOnceProps = {
     $initial_geoip_city_name: null,
+    $initial_geoip_subdivision_2_name: null,
+    $initial_geoip_subdivision_2_code: null,
+    $initial_geoip_subdivision_1_name: null,
+    $initial_geoip_subdivision_1_code: null,
     $initial_geoip_country_name: null,
     $initial_geoip_country_code: null,
     $initial_geoip_continent_name: null,
