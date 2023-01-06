@@ -45,7 +45,7 @@ test('event is enriched with IP location', async () => {
 
 test('person is enriched with IP location', async () => {
     const event = await processEvent({ ...createPageview(), ip: '89.160.20.129' }, await resetMetaWithMmdb())
-    expect(event!.$set).toEqual(
+    expect(event!.properties!.$set).toEqual(
         expect.objectContaining({
             $geoip_city_name: 'Linköping',
             $geoip_country_name: 'Sweden',
@@ -59,7 +59,7 @@ test('person is enriched with IP location', async () => {
             $geoip_subdivision_1_name: 'Östergötland County',
         })
     )
-    expect(event!.$set_once).toEqual(
+    expect(event!.properties!.$set_once).toEqual(
         expect.objectContaining({
             $initial_geoip_city_name: 'Linköping',
             $initial_geoip_country_name: 'Sweden',
@@ -84,7 +84,7 @@ test('person props default to null if no values present', async () => {
         { ...createPageview(), ip: '89.160.20.129' },
         await resetMetaWithMmdb(removeCityNameFromLookupResult)
     )
-    expect(event!.$set).toEqual(
+    expect(event!.properties!.$set).toEqual(
         expect.objectContaining({
             $geoip_city_name: null, // default to null
             $geoip_country_name: 'Sweden',
@@ -98,7 +98,7 @@ test('person props default to null if no values present', async () => {
             $geoip_subdivision_1_name: 'Östergötland County',
         })
     )
-    expect(event!.$set_once).toEqual(
+    expect(event!.properties!.$set_once).toEqual(
         expect.objectContaining({
             $initial_geoip_city_name: null, // default to null
             $initial_geoip_country_name: 'Sweden',
@@ -134,7 +134,7 @@ test('$set optimization works', async () => {
 
     const testEvent1 = { ...createPageview(), ip: '89.160.20.129' }
     const processedEvent1 = await processEvent(JSON.parse(JSON.stringify(testEvent1)), meta)
-    expect(processedEvent1!.$set).toMatchObject({
+    expect(processedEvent1!.properties!.$set).toMatchObject({
         $geoip_city_name: 'Linköping',
         $geoip_country_name: 'Sweden',
         $geoip_country_code: 'SE',
@@ -149,5 +149,5 @@ test('$set optimization works', async () => {
 
     const testEvent2 = { ...createPageview(), ip: '89.160.20.129', properties: { foo: 'same IP second time' } }
     const processedEvent2 = await processEvent(JSON.parse(JSON.stringify(testEvent2)), meta)
-    expect(processedEvent2!.$set).toBeUndefined()
+    expect(processedEvent2!.properties!.$set).toBeUndefined()
 })
