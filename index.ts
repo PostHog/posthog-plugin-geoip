@@ -96,10 +96,10 @@ const plugin: Plugin = {
                 }
 
                 if (setPersonProps) {
-                    if (!event.properties?.$set) {
+                    if (!event.properties.$set) {
                         event.properties.$set = {}
                     }
-                    if (!event.properties?.$set_once) {
+                    if (!event.properties.$set_once) {
                         event.properties.$set_once = {}
                     }
                     event.properties.$set = { ...defaultLocationSetProps, ...(event.$set ?? {}) }
