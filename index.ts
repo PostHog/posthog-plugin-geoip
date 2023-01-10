@@ -96,8 +96,14 @@ const plugin: Plugin = {
                 }
 
                 if (setPersonProps) {
-                    event.$set = { ...defaultLocationSetProps, ...(event.$set ?? {}) }
-                    event.$set_once = {
+                    if (!event.properties.$set) {
+                        event.properties.$set = {}
+                    }
+                    if (!event.properties.$set_once) {
+                        event.properties.$set_once = {}
+                    }
+                    event.properties.$set = { ...defaultLocationSetProps, ...(event.$set ?? {}) }
+                    event.properties.$set_once = {
                         ...defaultLocationSetOnceProps,
                         ...(event.$set_once ?? {}),
                     }
@@ -106,11 +112,11 @@ const plugin: Plugin = {
                 for (const [key, value] of Object.entries(location)) {
                     event.properties[`$geoip_${key}`] = value
                     if (setPersonProps) {
-                        event.$set![`$geoip_${key}`] = value
-                        event.$set_once![`$initial_geoip_${key}`] = value
+                        event.properties.$set![`$geoip_${key}`] = value
+                        event.properties.$set_once![`$initial_geoip_${key}`] = value
                     }
                 }
-                
+
                 if (setPersonProps) {
                     await cache.set(event.distinct_id, `${ip}|${event.timestamp || ''}`, ONE_DAY)
                 }
