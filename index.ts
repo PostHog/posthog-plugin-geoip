@@ -102,10 +102,10 @@ const plugin: Plugin = {
                     if (!event.properties.$set_once) {
                         event.properties.$set_once = {}
                     }
-                    event.properties.$set = { ...defaultLocationSetProps, ...(event.$set ?? {}) }
+                    event.properties.$set = { ...defaultLocationSetProps, ...(event.properties.$set ?? {}) }
                     event.properties.$set_once = {
                         ...defaultLocationSetOnceProps,
-                        ...(event.$set_once ?? {}),
+                        ...(event.properties.$set_once ?? {}),
                     }
                 }
 
