@@ -175,6 +175,20 @@ test('$set optimization doesnt override existing properties', async () => {
         $geoip_subdivision_1_code: 'E',
         $geoip_subdivision_1_name: 'Östergötland County',
     })
+    expect(processedEvent1!.properties!.$set_once).toMatchObject({
+        c: 1,
+        d: 2,
+        $initial_geoip_city_name: 'Linköping',
+        $initial_geoip_country_name: 'Sweden',
+        $initial_geoip_country_code: 'SE',
+        $initial_geoip_continent_name: 'Europe',
+        $initial_geoip_continent_code: 'EU',
+        $initial_geoip_latitude: 58.4167,
+        $initial_geoip_longitude: 15.6167,
+        $initial_geoip_time_zone: 'Europe/Stockholm',
+        $initial_geoip_subdivision_1_code: 'E',
+        $initial_geoip_subdivision_1_name: 'Östergötland County',
+    })
 
     const testEvent2 = {
         ...createPageview(),
@@ -186,4 +200,5 @@ test('$set optimization doesnt override existing properties', async () => {
         c: 3,
         d: 4,
     })
+    expect(processedEvent2!.properties!.$set_once).toBeUndefined()
 })
