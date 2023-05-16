@@ -35,7 +35,7 @@ const defaultLocationSetOnceProps = {
 }
 
 const plugin: Plugin = {
-    processEvent: async (event, { geoip }) => {
+    processEvent: async (event, { geoip, cache }) => {
         if (!geoip) {
             throw new Error('This PostHog version does not have GeoIP capabilities! Upgrade to PostHog 1.24.0 or later')
         }
@@ -77,17 +77,36 @@ const plugin: Plugin = {
                 if (!event.properties) {
                     event.properties = {}
                 }
-                    
-                if (!event.properties.$set) {
-                    event.properties.$set = {}
+
+                let setPersonProps = true
+
+                const lastIpSetEntry = await cache.get(event.distinct_id, null)
+                if (typeof lastIpSetEntry === 'string') {
+                    const [lastIpSet, timestamp] = lastIpSetEntry.split('|')
+
+                    // New IP but this event is late and another event that happened after
+                    // but was received earlier has already updated the props
+                    const isEventSettingPropertiesLate =
+                        event.timestamp && timestamp && new Date(event.timestamp) < new Date(timestamp)
+
+                    // Person props update is not needed if the event's IP is the same as last set for the person
+                    if (lastIpSet === ip || isEventSettingPropertiesLate) {
+                        setPersonProps = false
+                    }
                 }
-                if (!event.properties.$set_once) {
-                    event.properties.$set_once = {}
-                }
-                event.properties.$set = { ...defaultLocationSetProps, ...(event.properties.$set ?? {}) }
-                event.properties.$set_once = {
-                    ...defaultLocationSetOnceProps,
-                    ...(event.properties.$set_once ?? {}),
+
+                if (setPersonProps) {
+                    if (!event.properties.$set) {
+                        event.properties.$set = {}
+                    }
+                    if (!event.properties.$set_once) {
+                        event.properties.$set_once = {}
+                    }
+                    event.properties.$set = { ...defaultLocationSetProps, ...(event.properties.$set ?? {}) }
+                    event.properties.$set_once = {
+                        ...defaultLocationSetOnceProps,
+                        ...(event.properties.$set_once ?? {}),
+                    }
                 }
 
                 for (const [key, value] of Object.entries(location)) {
@@ -96,6 +115,10 @@ const plugin: Plugin = {
                         event.properties.$set![`$geoip_${key}`] = value
                         event.properties.$set_once![`$initial_geoip_${key}`] = value
                     }
+                }
+
+                if (setPersonProps) {
+                    await cache.set(event.distinct_id, `${ip}|${event.timestamp || ''}`, ONE_DAY)
                 }
             }
         }
