@@ -77,7 +77,7 @@ const plugin: Plugin = {
                 if (!event.properties) {
                     event.properties = {}
                 }
-                    
+
                 if (!event.properties.$set) {
                     event.properties.$set = {}
                 }
@@ -92,10 +92,8 @@ const plugin: Plugin = {
 
                 for (const [key, value] of Object.entries(location)) {
                     event.properties[`$geoip_${key}`] = value
-                    if (setPersonProps) {
-                        event.properties.$set![`$geoip_${key}`] = value
-                        event.properties.$set_once![`$initial_geoip_${key}`] = value
-                    }
+                    event.properties.$set![`$geoip_${key}`] = value
+                    event.properties.$set_once![`$initial_geoip_${key}`] = value
                 }
             }
         }
