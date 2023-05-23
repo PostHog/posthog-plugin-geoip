@@ -130,3 +130,86 @@ test('event is skipped using $geoip_disable', async () => {
     const processedEvent = await processEvent(JSON.parse(JSON.stringify(testEvent)), await resetMetaWithMmdb())
     expect(testEvent).toEqual(processedEvent)
 })
+
+test('$set optimization works', async () => {
+    const meta = await resetMetaWithMmdb()
+
+    const testEvent1 = { ...createPageview(), ip: '89.160.20.129' }
+    const processedEvent1 = await processEvent(JSON.parse(JSON.stringify(testEvent1)), meta)
+    expect(processedEvent1!.properties!.$set).toEqual({
+        $geoip_city_name: 'Linköping',
+        $geoip_country_name: 'Sweden',
+        $geoip_country_code: 'SE',
+        $geoip_continent_name: 'Europe',
+        $geoip_continent_code: 'EU',
+        $geoip_latitude: 58.4167,
+        $geoip_longitude: 15.6167,
+        $geoip_time_zone: 'Europe/Stockholm',
+        $geoip_subdivision_1_code: 'E',
+        $geoip_subdivision_1_name: 'Östergötland County',
+        $geoip_postal_code: null,
+        $geoip_subdivision_2_code: null,
+        $geoip_subdivision_2_name: null,
+    })
+
+    const testEvent2 = { ...createPageview(), ip: '89.160.20.129', properties: { foo: 'same IP second time' } }
+    const processedEvent2 = await processEvent(JSON.parse(JSON.stringify(testEvent2)), meta)
+    expect(processedEvent2!.properties!.$set).toBeUndefined()
+})
+
+test('$set optimization doesnt override existing properties', async () => {
+    const meta = await resetMetaWithMmdb()
+
+    const testEvent1 = {
+        ...createPageview(),
+        ip: '89.160.20.129',
+        properties: { $set: { a: 1, b: 2 }, $set_once: { c: 1, d: 2 } },
+    }
+    const processedEvent1 = await processEvent(JSON.parse(JSON.stringify(testEvent1)), meta)
+    expect(processedEvent1!.properties!.$set).toEqual({
+        a: 1,
+        b: 2,
+        $geoip_city_name: 'Linköping',
+        $geoip_country_name: 'Sweden',
+        $geoip_country_code: 'SE',
+        $geoip_continent_name: 'Europe',
+        $geoip_continent_code: 'EU',
+        $geoip_latitude: 58.4167,
+        $geoip_longitude: 15.6167,
+        $geoip_time_zone: 'Europe/Stockholm',
+        $geoip_subdivision_1_code: 'E',
+        $geoip_subdivision_1_name: 'Östergötland County',
+        $geoip_postal_code: null,
+        $geoip_subdivision_2_code: null,
+        $geoip_subdivision_2_name: null,
+    })
+    expect(processedEvent1!.properties!.$set_once).toEqual({
+        c: 1,
+        d: 2,
+        $initial_geoip_city_name: 'Linköping',
+        $initial_geoip_country_name: 'Sweden',
+        $initial_geoip_country_code: 'SE',
+        $initial_geoip_continent_name: 'Europe',
+        $initial_geoip_continent_code: 'EU',
+        $initial_geoip_latitude: 58.4167,
+        $initial_geoip_longitude: 15.6167,
+        $initial_geoip_time_zone: 'Europe/Stockholm',
+        $initial_geoip_subdivision_1_code: 'E',
+        $initial_geoip_subdivision_1_name: 'Östergötland County',
+        $initial_geoip_postal_code: null,
+        $initial_geoip_subdivision_2_code: null,
+        $initial_geoip_subdivision_2_name: null,
+    })
+
+    const testEvent2 = {
+        ...createPageview(),
+        ip: '89.160.20.129',
+        properties: { foo: 'same IP second time', $set: { c: 3, d: 4 } },
+    }
+    const processedEvent2 = await processEvent(JSON.parse(JSON.stringify(testEvent2)), meta)
+    expect(processedEvent2!.properties!.$set).toEqual({
+        c: 3,
+        d: 4,
+    })
+    expect(processedEvent2!.properties!.$set_once).toBeUndefined()
+})
