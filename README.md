@@ -56,4 +56,4 @@ set property `$geoip_disable` to `true` on that event.
 
 ## Questions?
 
-### [Join the PostHog Users Slack community.](https://posthog.com/slack)
+### [Join the PostHo community.](https://posthog.com/questions)
