@@ -50,6 +50,7 @@ const plugin: Plugin = {
                 const location: Record<string, any> = {}
                 if (response.city) {
                     location['city_name'] = response.city.names?.en
+                    location['confidence'] = response.city.confidence
                 }
                 if (response.country) {
                     location['country_name'] = response.country.names?.en
