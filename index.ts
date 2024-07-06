@@ -54,7 +54,7 @@ const plugin: Plugin = {
                 const location: Record<string, any> = {}
                 if (response.city) {
                     location['city_name'] = response.city.names?.en
-                    location['city_confidence'] = response.city.confidence
+                    location['city_confidence'] = response.city.confidence ?? null
                 }
                 if (response.country) {
                     location['country_name'] = response.country.names?.en
