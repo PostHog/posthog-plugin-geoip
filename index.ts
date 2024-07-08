@@ -4,6 +4,7 @@ const ONE_DAY = 60 * 60 * 24 // 24h in seconds
 
 const defaultLocationSetProps = {
     $geoip_city_name: null,
+    $geoip_city_confidence: null,
     $geoip_subdivision_2_name: null,
     $geoip_subdivision_2_code: null,
     $geoip_subdivision_1_name: null,
@@ -15,11 +16,13 @@ const defaultLocationSetProps = {
     $geoip_postal_code: null,
     $geoip_latitude: null,
     $geoip_longitude: null,
+    $geoip_accuracy_radius: null,
     $geoip_time_zone: null,
 }
 
 const defaultLocationSetOnceProps = {
     $initial_geoip_city_name: null,
+    $initial_geoip_city_confidence: null,
     $initial_geoip_subdivision_2_name: null,
     $initial_geoip_subdivision_2_code: null,
     $initial_geoip_subdivision_1_name: null,
@@ -31,6 +34,7 @@ const defaultLocationSetOnceProps = {
     $initial_geoip_postal_code: null,
     $initial_geoip_latitude: null,
     $initial_geoip_longitude: null,
+    $initial_geoip_accuracy_radius: null,
     $initial_geoip_time_zone: null,
 }
 
@@ -50,6 +54,7 @@ const plugin: Plugin = {
                 const location: Record<string, any> = {}
                 if (response.city) {
                     location['city_name'] = response.city.names?.en
+                    location['city_confidence'] = response.city.confidence ?? null
                 }
                 if (response.country) {
                     location['country_name'] = response.country.names?.en
@@ -65,6 +70,7 @@ const plugin: Plugin = {
                 if (response.location) {
                     location['latitude'] = response.location?.latitude
                     location['longitude'] = response.location?.longitude
+                    location['accuracy_radius'] = response.location?.accuracyRadius
                     location['time_zone'] = response.location?.timeZone
                 }
                 if (response.subdivisions) {
