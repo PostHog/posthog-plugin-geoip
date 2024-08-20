@@ -1,40 +1,39 @@
 import { Plugin } from '@posthog/plugin-scaffold'
 
-const defaultLocationSetProps = {
-    $geoip_city_name: null,
-    $geoip_city_confidence: null,
-    $geoip_subdivision_2_name: null,
-    $geoip_subdivision_2_code: null,
-    $geoip_subdivision_1_name: null,
-    $geoip_subdivision_1_code: null,
-    $geoip_country_name: null,
-    $geoip_country_code: null,
-    $geoip_continent_name: null,
-    $geoip_continent_code: null,
-    $geoip_postal_code: null,
-    $geoip_latitude: null,
-    $geoip_longitude: null,
-    $geoip_accuracy_radius: null,
-    $geoip_time_zone: null,
+const props = {
+    city_name: null,
+    city_confidence: null,
+    subdivision_2_name: null,
+    subdivision_2_code: null,
+    subdivision_2_confidence: null,
+    subdivision_1_name: null,
+    subdivision_1_code: null,
+    subdivision_1_confidence: null,
+    country_name: null,
+    country_code: null,
+    country_confidence: null,
+    continent_name: null,
+    continent_code: null,
+    postal_code: null,
+    postal_code_confidence: null,
+    latitude: null,
+    longitude: null,
+    accuracy_radius: null,
+    time_zone: null,
 }
 
-const defaultLocationSetOnceProps = {
-    $initial_geoip_city_name: null,
-    $initial_geoip_city_confidence: null,
-    $initial_geoip_subdivision_2_name: null,
-    $initial_geoip_subdivision_2_code: null,
-    $initial_geoip_subdivision_1_name: null,
-    $initial_geoip_subdivision_1_code: null,
-    $initial_geoip_country_name: null,
-    $initial_geoip_country_code: null,
-    $initial_geoip_continent_name: null,
-    $initial_geoip_continent_code: null,
-    $initial_geoip_postal_code: null,
-    $initial_geoip_latitude: null,
-    $initial_geoip_longitude: null,
-    $initial_geoip_accuracy_radius: null,
-    $initial_geoip_time_zone: null,
-}
+const defaultLocationSetProps = Object.entries(props).reduce((acc, [key]) => {
+    acc[`$geoip_${key}`] = null
+    return acc
+}, {} as Record<string, any>)
+
+
+const defaultLocationSetOnceProps = Object.entries(props).reduce((acc, [key]) => {
+    acc[`$initial_geoip_${key}`] = null
+    return acc
+}, {} as Record<string, any>)
+
+
 
 const plugin: Plugin = {
     processEvent: async (event, { geoip }) => {
