@@ -1,7 +1,5 @@
 import { Plugin } from '@posthog/plugin-scaffold'
 
-const ONE_DAY = 60 * 60 * 24 // 24h in seconds
-
 const defaultLocationSetProps = {
     $geoip_city_name: null,
     $geoip_city_confidence: null,
@@ -59,6 +57,7 @@ const plugin: Plugin = {
                 if (response.country) {
                     location['country_name'] = response.country.names?.en
                     location['country_code'] = response.country.isoCode
+                    location['country_confidence'] = response.country.confidence ?? null
                 }
                 if (response.continent) {
                     location['continent_name'] = response.continent.names?.en
@@ -66,6 +65,7 @@ const plugin: Plugin = {
                 }
                 if (response.postal) {
                     location['postal_code'] = response.postal.code
+                    location['postal_code_confidence'] = response.postal.confidence ?? null
                 }
                 if (response.location) {
                     location['latitude'] = response.location?.latitude
@@ -77,6 +77,7 @@ const plugin: Plugin = {
                     for (const [index, subdivision] of response.subdivisions.entries()) {
                         location[`subdivision_${index + 1}_code`] = subdivision.isoCode
                         location[`subdivision_${index + 1}_name`] = subdivision.names?.en
+                        location[`subdivision_${index + 1}_confidence`] = subdivision.confidence ?? null
                     }
                 }
 
