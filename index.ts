@@ -5,17 +5,13 @@ const props = {
     city_confidence: null,
     subdivision_2_name: null,
     subdivision_2_code: null,
-    subdivision_2_confidence: null,
     subdivision_1_name: null,
     subdivision_1_code: null,
-    subdivision_1_confidence: null,
     country_name: null,
     country_code: null,
-    country_confidence: null,
     continent_name: null,
     continent_code: null,
     postal_code: null,
-    postal_code_confidence: null,
     latitude: null,
     longitude: null,
     accuracy_radius: null,
@@ -51,12 +47,18 @@ const plugin: Plugin = {
                 const location: Record<string, any> = {}
                 if (response.city) {
                     location['city_name'] = response.city.names?.en
-                    location['city_confidence'] = response.city.confidence ?? null
+                    if (typeof response.city.confidence === 'number') {
+                        // NOTE: Confidence is part of the enterprise maxmind DB, not typically installed
+                        location['city_confidence'] = response.city.confidence
+                    }   
                 }
                 if (response.country) {
                     location['country_name'] = response.country.names?.en
                     location['country_code'] = response.country.isoCode
-                    location['country_confidence'] = response.country.confidence ?? null
+                    if (typeof response.country.confidence === 'number') {
+                        // NOTE: Confidence is part of the enterprise maxmind DB, not typically installed
+                        location['country_confidence'] = response.country.confidence ?? null
+                    }
                 }
                 if (response.continent) {
                     location['continent_name'] = response.continent.names?.en
@@ -64,7 +66,10 @@ const plugin: Plugin = {
                 }
                 if (response.postal) {
                     location['postal_code'] = response.postal.code
-                    location['postal_code_confidence'] = response.postal.confidence ?? null
+                    if (typeof response.postal.confidence === 'number') {
+                        // NOTE: Confidence is part of the enterprise maxmind DB, not typically installed
+                        location['postal_code_confidence'] = response.postal.confidence ?? null
+                    }
                 }
                 if (response.location) {
                     location['latitude'] = response.location?.latitude
@@ -76,7 +81,11 @@ const plugin: Plugin = {
                     for (const [index, subdivision] of response.subdivisions.entries()) {
                         location[`subdivision_${index + 1}_code`] = subdivision.isoCode
                         location[`subdivision_${index + 1}_name`] = subdivision.names?.en
-                        location[`subdivision_${index + 1}_confidence`] = subdivision.confidence ?? null
+
+                        if (typeof subdivision.confidence === 'number') {
+                            // NOTE: Confidence is part of the enterprise maxmind DB, not typically installed
+                            location[`subdivision_${index + 1}_confidence`] = subdivision.confidence ?? null
+                        }
                     }
                 }
 
